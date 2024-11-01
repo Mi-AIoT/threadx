@@ -1,0 +1,115 @@
+# Command should run in windows WSL Ubuntu 20.04
+
+# 需要设置下 arm gnu gcc的路径
+# 自己下载一个 arm gcc 的安装包，然后设置下环境变量 https://developer.arm.com/downloads/-/gnu-rm
+
+==== Run sample_threadx.axf ====
+
+# Install qemu-system-arm using root
+# apt install qemu-system-arm
+qemu-system-arm --version
+'QEMU emulator version 4.2.1 (Debian 1:4.2-3ubuntu6.29)
+Copyright (c) 2003-2019 Fabrice Bellard and the QEMU Project developers
+
+# In WSL
+
+## Termainal 1
+qemu-system-arm -M mps2-an385 -cpu cortex-m3 -kernel sample_threadx.axf -nographic -serial stdio -monitor none -S -s
+
+## Termainal 2
+arm-none-eabi-gdb.exe sample_threadx.axf
+(gdb) target remote :1234
+`C:\Work\Scratch\2024\threadx\threadx\ports_module\cortex_m3\gnu\example_build\sample_threadx.axf' has changed; re-reading symbols.
+Remote debugging using :1234
+reset_handler () at tx_simulator_startup.S:70
+70        b _start
+(gdb) b main
+(gdb) c
+(gdb) c
+Continuing.
+
+Breakpoint 1, main () at sample_threadx.c:63
+63          tx_kernel_enter();
+(gdb) b 367
+(gdb) c
+Continuing.
+
+Breakpoint 3, thread_6_and_7_entry (thread_input=6) at sample_threadx.c:367
+367             status =  tx_mutex_put(&mutex_0);
+(gdb) p thread_6_counter 
+$1 = 4
+
+# 上面就证明sample thread正常运行了
+
+==== Run sample_threadx_module_manager.axf & sample_threadx_module.bin ====
+
+qemu command:
+qemu-system-arm -M mps2-an385  -kernel sample_threadx_module_manager.axf -nographic -serial stdio -monitor none -device loader,file=sample_threadx_module.bin,addr=0x00030000 -S -s
+
+暂时还无法证明是否整套系统跑通了。但是打断点发现是没有进异常
+
+arm-none-eabi-gdb.exe sample_threadx_module_manager.axf
+(gdb) target remote :1234
+Remote debugging using :1234
+reset_handler () at tx_simulator_startup.S:70
+70        b _start
+(gdb) add-symbol-file sample_threadx
+sample_threadx.axf                 sample_threadx.map                 sample_threadx_module.bin          sample_threadx_module.map          sample_threadx_module_manager.c
+sample_threadx.c                   sample_threadx.o                   sample_threadx_module.c            sample_threadx_module.o            sample_threadx_module_manager.map
+sample_threadx.ld                  sample_threadx_module.axf          sample_threadx_module.ld           sample_threadx_module_manager.axf  sample_threadx_module_manager.o
+(gdb) add-symbol-file sample_threadx_module.axf 0x00030000
+add symbol table from file "sample_threadx_module.axf" at
+        .text_addr = 0x30000
+(y or n) y
+Reading symbols from sample_threadx_module.axf...
+(gdb) b module_manager_entry
+warning: could not convert 'module_manager_entry' from the host encoding (CP1252) to UTF-32.
+This normally should not happen, please file a bug report.
+Breakpoint 1 at 0x25c: file sample_threadx_module_manager.c, line 72.
+(gdb) c
+Continuing.
+
+Breakpoint 1, module_manager_entry (thread_input=0) at sample_threadx_module_manager.c:72
+72          txm_module_manager_initialize((VOID *) module_ram, 32768);
+(gdb) b 107 
+Breakpoint 2 at 0x2ba: file sample_threadx_module_manager.c, line 107.
+(gdb) c
+Continuing.
+
+Breakpoint 2, module_manager_entry (thread_input=0) at sample_threadx_module_manager.c:107
+107             tx_thread_sleep(100);
+(gdb) c
+Continuing.
+
+Breakpoint 2, module_manager_entry (thread_input=0) at sample_threadx_module_manager.c:107
+107             tx_thread_sleep(100);
+(gdb) c
+Continuing.
+
+Breakpoint 2, module_manager_entry (thread_input=0) at sample_threadx_module_manager.c:107
+107             tx_thread_sleep(100);
+(gdb) c
+Continuing.
+
+Breakpoint 2, module_manager_entry (thread_input=0) at sample_threadx_module_manager.c:107
+107             tx_thread_sleep(100);
+(gdb) p memory_faults
+$1 = 0
+(gdb) x /32 module_ram
+0x2000461c <module_ram>:        536921620       -4370   0       0
+0x2000462c <module_ram+16>:     0       0       0       0
+0x2000463c <module_ram+32>:     0       0       0       0
+0x2000464c <module_ram+48>:     0       0       0       0
+0x2000465c <module_ram+64>:     0       0       0       0
+0x2000466c <module_ram+80>:     0       0       0       0
+0x2000467c <module_ram+96>:     0       0       0       0
+0x2000468c <module_ram+112>:    0       0       0       0
+(gdb) x /32x module_ram
+0x2000461c <module_ram>:        0x2000c614      0xffffeeee      0x00000000      0x00000000
+0x2000462c <module_ram+16>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000463c <module_ram+32>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000464c <module_ram+48>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000465c <module_ram+64>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000466c <module_ram+80>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000467c <module_ram+96>:     0x00000000      0x00000000      0x00000000      0x00000000
+0x2000468c <module_ram+112>:    0x00000000      0x00000000      0x00000000      0x00000000
