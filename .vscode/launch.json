@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug ThreadX ARM",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "C:\\Work\\Scratch\\2024\\threadx\\threadx\\ports_module\\cortex_m3\\gnu\\example_build\\sample_threadx_module_manager.axf",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\SysGCC\\arm-eabi\\bin\\arm-none-eabi-gdb.exe",
+            "miDebuggerServerAddress": "localhost:1234",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Add Extra Symbol File",
+                    "text": "add-symbol-file C:/Work/Scratch/2024/threadx/threadx/ports_module/cortex_m3/gnu/example_build/sample_threadx_module.axf 0x00030000",
+                    "ignoreFailures": true
+                }
+            ],
+            "useExtendedRemote": true
+        }
+
+    ]
+}
