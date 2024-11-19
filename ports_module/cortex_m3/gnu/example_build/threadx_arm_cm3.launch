@@ -10,7 +10,7 @@
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.doSecondReset" value="true"/>
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.doStartGdbServer" value="false"/>
     <booleanAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.enableSemihosting" value="true"/>
-    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.gdbClientOtherCommands" value="set mem inaccessible-by-default off&#13;&#10;add-symbol-file ports_module/cortex_m3/gnu/example_build/sample_threadx_module.axf 0x00030000"/>
+    <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.gdbClientOtherCommands" value="set mem inaccessible-by-default off"/>
     <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.gdbClientOtherOptions" value=""/>
     <intAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.gdbServerDelaySeconds" value="0"/>
     <stringAttribute key="ilg.gnumcueclipse.debug.gdbjtag.qemu.gdbServerExecutable" value="${qemu_arm_path}/${qemu_arm_executable}"/>
@@ -57,6 +57,6 @@
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="4"/>
     </listAttribute>
-    <stringAttribute key="org.eclipse.dsf.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList context=&quot;Context string&quot;/&gt;&#13;&#10;"/>
+    <stringAttribute key="org.eclipse.dsf.launch.MEMORY_BLOCKS" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;memoryBlockExpressionList context=&quot;Context string&quot;&gt;&#13;&#10;    &lt;memoryBlockExpression address=&quot;196608&quot; label=&quot;0x00030000&quot;/&gt;&#13;&#10;    &lt;memoryBlockExpression address=&quot;200852&quot; label=&quot;0x31094&quot;/&gt;&#13;&#10;    &lt;memoryBlockExpression address=&quot;536893440&quot; label=&quot;0x20005800&quot;/&gt;&#13;&#10;    &lt;memoryBlockExpression address=&quot;536900480&quot; label=&quot;0x20007380&quot;/&gt;&#13;&#10;    &lt;memoryBlockExpression address=&quot;536900476&quot; label=&quot;0x2000737c&quot;/&gt;&#13;&#10;&lt;/memoryBlockExpressionList&gt;&#13;&#10;"/>
     <stringAttribute key="process_factory_id" value="org.eclipse.cdt.dsf.gdb.GdbProcessFactory"/>
 </launchConfiguration>

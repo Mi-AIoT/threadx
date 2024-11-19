@@ -1,3 +1,32 @@
+# Working Notes In Nuclei Studio
+
+1. Import this threadx project as eclipse cdt project
+
+   - Import -> General -> Existing Projects into Workspace
+   - Select root directory -> 选择threadx代码所在目录
+   - Select threadx_arm, 其他的options都不选择
+
+2. 在IDE里面展开工程threadx_arm 里面 ports_module/cortex_m3/gnu/example_build 目录
+
+   - 选择 wsl_qemu_gdbserver.bat 右键 open in Termainal
+   - 先构建需要的两个代码sample_threadx_module_manager.axf + sample_threadx_module.bin，执行 .\build_all.bat
+   - 在终端里面执行 .\wsl_qemu_gdbserver.bat
+
+3. 选中 threadx_arm_cm3.launch 右键 Debug As -> threadx_arm_cm3
+
+   - 调试成功进入后，在 Debugger Console里面执行 add-symbol-file ports_module/cortex_m3/gnu/example_build/sample_threadx_module.axf 0x00030000 -s .bss 0x200058d8
+   - 然后运行一段时间后（大概5s），然后打开 sample_threadx_module.c 代码，在thread_6_and_7_entry函数里面387行设置断点
+   - 添加 expressions thread_6_counter thread_5_counter thread_7_counter
+   - 运行几次，都会在断点处停下，且观察的变量也会动态变化
+
+# 下面是依赖的一些软件
+
+- Windows 10
+- WSL2: Ubuntu 20.04 + qemu-system-arm installed
+- arm-gnu toolchain
+- Nuclei Studio 2024.06
+
+下面是WSL的需要Ubuntu 20.04，并且安装了 qemu-system-arm 软件包
 # Command should run in windows WSL Ubuntu 20.04
 cd ports_module/cortex_m3/gnu/example_build/
 # 需要设置下 arm gnu gcc的路径
@@ -48,6 +77,11 @@ qemu-system-arm -M mps2-an385  -kernel sample_threadx_module_manager.axf -nograp
 
 暂时还无法证明是否整套系统跑通了。但是打断点发现是没有进异常
 
+> add-symbol-file ports_module/cortex_m3/gnu/example_build/sample_threadx_module.axf 0x00030000 -s .bss 0x200058d8
+
+> remove-symbol-file -a 0x00030000
+
+
 arm-none-eabi-gdb.exe sample_threadx_module_manager.axf
 (gdb) target remote :1234
 Remote debugging using :1234
@@ -57,9 +91,10 @@ reset_handler () at tx_simulator_startup.S:70
 sample_threadx.axf                 sample_threadx.map                 sample_threadx_module.bin          sample_threadx_module.map          sample_threadx_module_manager.c
 sample_threadx.c                   sample_threadx.o                   sample_threadx_module.c            sample_threadx_module.o            sample_threadx_module_manager.map
 sample_threadx.ld                  sample_threadx_module.axf          sample_threadx_module.ld           sample_threadx_module_manager.axf  sample_threadx_module_manager.o
-(gdb) add-symbol-file sample_threadx_module.axf 0x00030000
+(gdb) add-symbol-file sample_threadx_module.axf 0x00030000 -s .bss 0x200058d8
 add symbol table from file "sample_threadx_module.axf" at
         .text_addr = 0x30000
+        .bss_addr = 0x200058d8
 (y or n) y
 Reading symbols from sample_threadx_module.axf...
 (gdb) b module_manager_entry
